@@ -55,21 +55,15 @@ public class DataStorageImpl implements DataStorage {
 
     @Override
     public String findOneAndMapToString(Predicate<Person> filter, Function<Person, String> personToString) {
-        for (Person person : personList) {
-            if (filter.test(person)) {
-                return personToString.apply(person);
-            }
-        }
-        return null;
+        return personToString.apply(findOne(filter));
     }
 
     @Override
     public List<String> findManyAndMapEachToString(Predicate<Person> filter, Function<Person, String> personToString) {
+        List<Person> persons = findMany(filter);
         List<String> result = new ArrayList<>();
-        for (Person person : personList) {
-            if (filter.test(person)) {
-                result.add(personToString.apply(person));
-            }
+        for (Person person : persons) {
+            result.add(personToString.apply(person));
         }
         return result;
     }
@@ -92,12 +86,7 @@ public class DataStorageImpl implements DataStorage {
 
     @Override
     public List<Person> findAndSort(Predicate<Person> filter, Comparator<Person> comparator) {
-        List<Person> result = new ArrayList<>();
-        for (Person person : personList) {
-            if (filter.test(person)) {
-                result.add(person);
-            }
-        }
+        List<Person> result = findMany(filter);
         result.sort(comparator);
         return result;
     }
